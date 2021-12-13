@@ -138,7 +138,7 @@ $listCategory = $category->getAllCategory();
                 <div class="col-sm-12">
                     <input id="input_images" name="images[]" class="form-control" multiple type="file" accept="image/*" onchange="preview_image(event);">
                 </div>
-                <div class="col-sm-12" id="preview-images">
+                <div class="col-sm-12 preview-images" id="preview-images">
                 </div>
             </div>
         </div>

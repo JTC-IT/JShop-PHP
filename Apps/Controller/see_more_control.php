@@ -17,9 +17,11 @@ function getImage($id, $index){
 }
 
 $result = '';
-$listProducts = $product->getProducts($_GET);
+
+$param = ["start"=>isset($_GET['start'])?$_GET['start']:0, "limit"=>6];
+$listProducts = $product->getProducts($param);
 if(isset($listProducts)) foreach ($listProducts as $p) {
-        $result = $result."<div class='col-sm-4 pb-3 productItem'>
+    $result = $result."<div class='col-sm-4 pb-3 productItem'>
                 <div class='card'>
                     <div class='card-body d-flex flex-column align-items-center'>
                         <img src='".getImage($p['Id'],0)."' alt='Hình ảnh sản phẩm'>
@@ -37,9 +39,5 @@ if(isset($listProducts)) foreach ($listProducts as $p) {
                 </div>
             </div><br>";
 }
-if($result == '')
-    $result = $result."<div class='alert alert-secondary col-sm-12 text-center' role='alert'>
-                          Không tìm thấy sản phẩm nào!
-                        </div>";
 
 echo $result;

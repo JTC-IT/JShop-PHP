@@ -2,6 +2,10 @@
     require_once '../Apps/Libs/Category.php';
     require_once '../Apps/Libs/Product.php';
     require_once '../Apps/Libs/Media.php';
+    require_once '../Apps/Libs/Cart.php';
+
+    //start session
+    session_start();
 
     //get category
     $category = new Category();
@@ -28,7 +32,7 @@
                 "<ul class='submenu dropdown-menu'>";
             foreach ($listChild as $child)
                 getlistChildcategory($child);
-            echo "</ul>";
+            echo "</ul></li>";
         }else
         echo "<li><a class='category-item dropdown-item' href='Home.php?categoryId=".$parent['Id']."'>".$parent['Name']."</a></li>";
     }
@@ -44,14 +48,15 @@
     <link rel="icon" href="../Media/Images/icon_jshop.png">
 
     <!-- Bootstrap -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
     <!-- IonIcon -->
     <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
 
     <!-- CSS -->
+    <link rel="stylesheet" href="../Media/CSS/home_style.css">
     <link rel="stylesheet" href="../Media/CSS/product_details_style.css">
 </head>
 <body>
@@ -77,12 +82,12 @@
             </a>
             <!-- Right elements -->
             <div class="d-flex justify-content-between align-items-center w-50">
-                <div class="has-search w-75 h-auto d-flex align-items-center">
+                <form action="" class="has-search w-75 h-auto d-flex align-items-center">
                     <ion-icon name="search" class="form-control-feedback" size="small"></ion-icon>
                     <input type="text" id="search" class="form-control" placeholder="Tìm kiếm sản phẩm" oninput="searchByKey(this)">
-                </div>
-                <a class="nav-link d-flex align-items-center link-cart" href="#">
-                    <span id="badge-cart" class="badge rounded-pill bg-danger text-light"></span>
+                </form>
+                <a class="nav-link d-flex align-items-center link-cart" href="CartView.php">
+                    <span id="badge-cart" class="badge rounded-pill bg-danger text-light"><?php if(isset($_SESSION['cart'])) echo getTotalQuantity($_SESSION['cart'])?></span>
                     <ion-icon name="cart-outline"></ion-icon>
                 </a>
             </div>
@@ -95,6 +100,7 @@
         <div class="col-sm-3 list-category">
             <ul id="list-category">
                 <li class="p-2 bg-warning font-weight-bold text-dark text-center">DANH MỤC</li>
+                <li><a class='category-item dropdown-item' href='Home.php?categoryId=0'>Tất cả sản phẩm</a></li>
                 <?php if($listCategory != null) foreach($listCategory as $el){
                     getlistChildcategory($el);
                 } ?>
@@ -118,9 +124,9 @@
                                 ?>
                             </ul>
                         </div>
-                        <form class="details col-md-6" action="../Apps/Controller/order_control.php" method="post">
+                        <form class="col-md-6" action="../Apps/Controller/order_control.php" method="post">
                             <input type="hidden" name="id" value="<?=$p['Id']?>">
-                            <input name="img" type="hidden" value="../Media/Images/<?=$imgs[0]['Url']?>">
+                            <input name="img" type="hidden" value="<?=$imgs[0]['Url']?>">
                             <input type="hidden" name="name" value="<?=$p['Name']?>">
                             <input type="hidden" name="brand" value="<?=$p['Brand']?>">
                             <input type="hidden" name="price" value="<?=$p['Price']?>">
@@ -128,11 +134,14 @@
                             <small class="text-primary font-weight-bold">Thương hiệu: <?=$p['Brand']?></small>
                             <p class="product-description text-justify"><?=$p['Description']?></p>
                             <h4 class="price">Giá: <span><?=number_format($p['Price']).' đ'?></span></h4>
-                            <div class="count-input">
-                                <label for="quantity">Số lượng:</label>
-                                <label>
-                                    <input class="form-control" type="number" name="quantity" value="1" min="1" max="30">
-                                </label>
+                            <div class="form-group row d-flex align-items-center">
+                                <label for="quantity" class="quantity col-sm-5">Số lượng:</label>
+                                <select name="quantity" class="form-control col-sm-3" id="quantity">
+                                    <option value='1' selected>1</option>
+                                    <?php for($i = 2; $i < 10; $i++)
+                                        echo "<option value='$i'>$i</option>";
+                                    ?>
+                                </select>
                             </div>
                             <div class="d-flex justify-content-end">
                                 <button class="add-to-cart btn btn-default" type="submit" name="submit">Thêm giỏ hàng</button>

@@ -4,7 +4,7 @@
 
     //get current_page
     $current_page = isset($_GET['page']) ? $_GET['page'] : 1;
-    $limit = 10;
+    $limit = isset($_GET['limit']) ? $_GET['limit'] : 7;
 
     //get category
     $category = new Category();
@@ -12,8 +12,12 @@
 
     //get products
     $product = new Product();
-    $listProducts = $product->getProducts(($current_page-1)*$limit, $limit);
-    $total_records = $product->total_records();
+    $categoryId = isset($_GET['categoryId']) ? $_GET['categoryId'] : 0;
+    $key = isset($_GET['key']) ? $_GET['key'] : '';
+    $param = ["categoryId"=> $categoryId, "key"=>$key, "start"=>($current_page-1)*$limit, "limit"=>$limit];
+    $listProducts = $product->getProducts($param);
+
+    $total_records = $product->total_records($param);
 
     // tổng số trang
     $total_page = ceil($total_records / $limit);
@@ -48,7 +52,7 @@
     <!--Right elements-->
     <ul class="navbar-nav">
         <!-- Right elements -->
-        <li class="nav-item"><a href="#">LOGOUT</a></li>
+        <li class="nav-item"><a href="#">Đăng xuất</a></li>
         <li class="nav-item"><a href="#">ADMIN</a></li>
     </ul>
 </div>
@@ -72,21 +76,24 @@
         <div class="table-wrapper">
             <div class="table-title">
                 <div class="row">
-                    <div class="col-sm-7"><h2>Products <b>Manage</b></h2></div>
+                    <div class="col-sm-7"><h2>Quản lý <b>sản phẩm</b></h2></div>
                     <div class="col-sm-5 d-flex justify-content-between align-items-center">
                         <a href="Add_Product.php" class="badge badge-pill badge-success p-3">
                             <i class="fa fa-plus" aria-hidden="true"></i>
                              Thêm sản phẩm
                         </a>
-                        <select class="form-control form-control-sm w-50 ml-3 mr-3" onchange="searchByCategory(this.value,1)">
-                            <option value="0" selected>All products</option>
+                        <select class="form-control form-control-sm w-50 ml-3 mr-3"
+                                onchange="location = 'Product_manage.php?categoryId='+ this.value">
+                            <option value="0" <?=$categoryId==0?"selected":''?>>Tất cả sản phẩm</option>
                             <?php if($listCategory != null) foreach($listCategory as $el){?>
-                                <option value="<?=$el['Id']?>"><?=$el['Name']?></option>
+                                <option value="<?=$el['Id']?>" <?=$categoryId==$el['Id']?"selected":''?>>
+                                    <?=$el['Name']?>
+                                </option>
                             <?php } ?>
                         </select>
-                        <form action="" method="post" class="search-box">
+                        <form action="Product_manage.php" method="get" class="search-box">
                             <i class="material-icons">&#xE8B6;</i>
-                            <input type="text" class="form-control" placeholder="Search&hellip;" oninput="searchByKey(this.value,1)">
+                            <input type="text" name="key" class="form-control" placeholder="Tìm sản phẩm" value="<?=$key?>">
                         </form>
                     </div>
                 </div>
@@ -95,12 +102,12 @@
                 <thead>
                 <tr>
                     <th>#</th>
-                    <th>Name</th>
-                    <th>Brand</th>
-                    <th>Stocks</th>
-                    <th>Price</th>
-                    <th>Date update</th>
-                    <th>Actions</th>
+                    <th>Sản phẩm</th>
+                    <th>Thương hiệu</th>
+                    <th>Tồn kho</th>
+                    <th>Giá</th>
+                    <th>Ngày cập nhật</th>
+                    <th>Thao tác</th>
                 </tr>
                 </thead>
                 <tbody id="list-products">
@@ -124,12 +131,20 @@
                 </tbody>
             </table>
             <div class="clearfix">
-                <div id="result-showing" class="hint-text">Showing <b><?=count($listProducts)?></b> out of <b><?=$total_records?></b> products</div>
+                <div id="result-showing" class="hint-text">Hiển thị <b><?=count($listProducts)?></b> trên <b><?=$total_records?></b> sản phẩm</div>
                 <ul class="pagination">
-                    <li class="page-item disabled"><a href="#" class="page-link"><i class="fa fa-angle-double-left"></i></a></li>
-                    <li class="page-item active"><a href="#" class="page-link"><?=$current_page?></a></li>
-                    <li class="page-item <?=$total_page > $current_page ? "": "disabled"?>">
-                        <a href="#" class="page-link"><i class="fa fa-angle-double-right"></i></a>
+                    <li class="page-item <?=$current_page > 1 ? '': 'disabled'?>">
+                        <a href="Product_manage.php?page=<?=$current_page-1?>&categoryId=<?=$categoryId?>&key=<?=$key?>"
+                           class="page-link">
+                            <i class="fa fa-angle-double-left"></i>
+                        </a>
+                    </li>
+                    <li class="page-item active"><a class="page-link"><?=$current_page?></a></li>
+                    <li class="page-item <?=$total_page > $current_page ? '': 'disabled'?>">
+                        <a href="Product_manage.php?page=<?=$current_page+1?>&categoryId=<?=$categoryId?>&key=<?=$key?>"
+                           class="page-link">
+                            <i class="fa fa-angle-double-right"></i>
+                        </a>
                     </li>
                 </ul>
             </div>
@@ -182,3 +197,20 @@
 <script src="../Media/JS/product_manage_script.js"></script>
 </body>
 </html>
+<?php
+    if(isset($_GET['mess'])){
+        switch ($_GET['mess']){
+            case '-1':
+                echo "<script>alert('Thêm sản phẩm không thành công!')</script>";
+                break;
+            case '1':
+                echo "<script>alert('Thêm sản phẩm thành công!')</script>";
+                break;
+            case '-2':
+                echo "<script>alert('Cập nhật sản phẩm không thành công!')</script>";
+                break;
+            case '2':
+                echo "<script>alert('Cập nhật sản phẩm thành công!')</script>";
+                break;
+        }
+    }

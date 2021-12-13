@@ -59,20 +59,37 @@ form .btn {
     margin-left: 10px;
 }
 
-#preview-images {
+.preview-images {
     width: 100%;
     height: auto;
     display: flex;
     flex-wrap: wrap;
-    justify-content: space-between;
+    justify-content: flex-start;
 }
 
-#preview-images img {
+.preview-images>img, .preview-images .image-box{
     max-width: 100px;
     margin-top: 1em;
     border: 1px solid #ccc;
     border-radius: 3px;
     object-fit: cover;
+    margin-right: 7px;
+}
+
+.preview-images>.image-box{
+    position: relative;
+}
+
+.preview-images .image-box img{
+    width: 100%;
+    object-fit: cover;
+}
+
+.preview-images .image-box .badge{
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    cursor: pointer;
 }
 
 /*----------------------Modal --------------------------*/

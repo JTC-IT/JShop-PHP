@@ -1,12 +1,23 @@
 <?php
 require_once '../Libs/Product.php';
-require_once '../Libs/Media.php';
+require_once './add_media_control.php';
 
 //Create class Product and Media:
 $product = new Product();
-$media = new Media();
 
-if(isset($_POST) && isset($_POST['id'])) {
+$productId = 0;
+
+if(
+    isset($_POST)
+    && isset($_POST['id'])
+    && isset($_POST['name'])
+    && isset($_POST['description'])
+    && isset($_POST['brand'])
+    && isset($_POST['model-year'])
+    && isset($_POST['stock'])
+    && isset($_POST['price'])
+    && isset($_POST['category'])
+) {
     $p = [
         ':id' => $_POST['id']
         ,':name' => $_POST['name']
@@ -20,7 +31,12 @@ if(isset($_POST) && isset($_POST['id'])) {
         , ':cur_date' => date('Y-m-d H:i:s')
     ];
     $productId = intval($product->updateProduct($p));
+
+    if(isset($_FILES['images']) && $productId > 0){
+        add_images($productId,$_FILES['images']);
+    }
 }
 
-header("Location: ../../Admin/Product_manage.php");
+if($productId > 0) header("Location: ../../Admin/Product_manage.php?mess=2");
+else header("Location: ../../Admin/Product_manage.php?mess=-2");
 exit;

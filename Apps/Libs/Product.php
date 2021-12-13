@@ -8,20 +8,18 @@ require_once 'DBConnection.php';
  */
 class Product
 {
-    public function getProducts($start, $limit){
-        $db = new  DBConnection('pmmanguonmo');
-        $sql = "select Id, Name, Brand, Stocks, Price, Date_Updated from product where Is_Deleted = 0 LIMIT $start, $limit";
-        return $db->query_select($sql);
-    }
-
-    public function getProductsByPage($categoryId, $key, $start, $limit){
+    public function getProducts($param = []){
         $db = new  DBConnection('pmmanguonmo');
         $sql = "select * from product where Is_Deleted = 0";
-        if($categoryId > 0)
-            $sql = $sql." and CategoryId = $categoryId";
-        else if($key != null)
-            $sql = $sql." and Name LIKE '%$key%'";
-        $sql = $sql." LIMIT $start, $limit";
+        if(isset($param['categoryId']) && $param['categoryId'] > 0)
+            $sql = $sql." and CategoryId = ".$param['categoryId'];
+        if(isset($param['key']) && $param['key'] != null && $param['key'] != '')
+            $sql = $sql." and Name LIKE '%".$param['key']."%'";
+        if(!isset($param['start']))
+            $param['start'] = 0;
+        if(!isset($param['limit']))
+            $param['limit'] = 9;
+        $sql = $sql." LIMIT ".$param['start'].", ".$param['limit'];
         return $db->query_select($sql);
     }
 
@@ -38,10 +36,10 @@ class Product
         if(!is_array($param) || count($param) < 1)
             return $db->query_select($sql)[0]['total'];
         if(isset($param['categoryId']) && $param['categoryId'] > 0)
-            $sql = $sql.' and CategoryId = :categoryId';
-        else if(isset($param['key']))
-            $sql = $sql." and Name LIKE '%:key%'";
-        return $db->query_select($sql,$param)['total'];
+            $sql = $sql." and CategoryId = ".$param['categoryId'];
+        if(isset($param['key']) && $param['key'] != '')
+            $sql = $sql." and Name LIKE '%".$param['key']."%'";
+        return $db->query_select($sql)[0]['total'];
     }
 
     //Add product

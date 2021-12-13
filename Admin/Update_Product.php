@@ -50,7 +50,7 @@ $images = $media->getImages($id);
     <!--Right elements-->
     <ul class="navbar-nav">
         <!-- Right elements -->
-        <li class="nav-item"><a href="#">LOGOUT</a></li>
+        <li class="nav-item"><a href="#">Đăng xuất</a></li>
         <li class="nav-item"><a href="#">ADMIN</a></li>
     </ul>
 </div>
@@ -151,16 +151,20 @@ $images = $media->getImages($id);
             <div class="col-sm-5 mt-4">
                 <!-- File Button -->
                 <div class="form-group row">
-                    <label class="col-sm-12 control-label" for="main_image">HÌNH ẢNH SẢN PHẨM</label>
+                    <label class="col-sm-12 control-label" >HÌNH ẢNH SẢN PHẨM</label>
+                    <div class="col-sm-12 preview-images" title="<?=$image['Id']?>">
+                        <?php foreach ($images as $image){ ?>
+                            <div class="image-box">
+                                <a href="#" title="<?=$image['Id']?>" class="badge badge-pill badge-danger">x</a>
+                                <img src='../Media/Images/<?=$image['Url']?>' class='image-preview' alt="Ảnh sản phẩm">
+                            </div>
+                        <?php } ?>
+                    </div>
+                    <label class="col-sm-12 control-label mt-4" for="main_image">THÊM HÌNH ẢNH SẢN PHẨM</label>
                     <div class="col-sm-12">
                         <input id="input_images" name="images[]" class="form-control" multiple type="file" accept="image/*" onchange="preview_image(event);">
                     </div>
-                    <div class="col-sm-12" id="preview-images">
-                        <?php
-                        foreach ($images as $image){
-                            echo "<img src='../Media/Images/".$image['Url']."' class='image-preview'>";
-                        }
-                        ?>
+                    <div class="col-sm-12 preview-images" id="preview-images">
                     </div>
                 </div>
             </div>

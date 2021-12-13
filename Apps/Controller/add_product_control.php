@@ -1,34 +1,22 @@
 <?php
 require_once '../Libs/Product.php';
-require_once '../Libs/Media.php';
+require_once './add_media_control.php';
 
 //Create class Product and Media:
 $product = new Product();
-$media = new Media();
 
-//func get count total images
-function count_dir_files($dirname)
-{
-    $total_files=0;
-    if(is_dir($dirname))
-    {
-        $dp=opendir($dirname);
-        if($dp)
-        {
-            while(($filename=readdir($dp)) == true)
-            {
-                if(($filename !=".") && ($filename !=".."))
-                {
-                    $total_files++;
-                }
-            }
-        }
-    }
-    return $total_files;
-}
+$productId = 0;
 
 //get params:
-if(isset($_POST)){
+if(isset($_POST)
+    && isset($_POST['name'])
+    && isset($_POST['description'])
+    && isset($_POST['brand'])
+    && isset($_POST['model-year'])
+    && isset($_POST['stock'])
+    && isset($_POST['price'])
+    && isset($_POST['category'])
+){
     $p = [
         ':name' => $_POST['name']
         ,':description' => $_POST['description']
@@ -41,16 +29,11 @@ if(isset($_POST)){
     ];
     $productId = intval($product->addProduct($p));
     if(isset($_FILES) && $productId > 0){
-        $total_files_dir  = count_dir_files('../../Media/Images')+1;
-        $len = count($_FILES['images']['name']);
-        for ($i = 0; $i < $len; $i++)
-            if($_FILES['images']['name'][$i] != ''){
-                $file_name = "image-".($total_files_dir + $i).str_replace("image/",".",$_FILES['images']['type'][$i]);
-                move_uploaded_file($_FILES['images']["tmp_name"][$i], "../../Media/Images/".$file_name);
-                $media->addImages([":productId"=>$productId, ":url"=>$file_name, ":index"=>$i]);
-            }
+        add_images($productId,$_FILES['images']);
     }
 }
 
-header("Location: ../../Admin/Product_manage.php");
+if($productId > 0)
+    header("Location: ../../Admin/Product_manage.php?mess=1");
+else header("Location: ../../Admin/Product_manage.php?mess=-1");
 exit;

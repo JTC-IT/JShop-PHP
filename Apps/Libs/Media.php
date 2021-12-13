@@ -18,13 +18,13 @@ class Media
     //get all images by productId
     public function getImages($id){
         $db = new  DBConnection('pmmanguonmo');
-        $sql = "select Url from media where ProductId = :id and Is_Deleted = :is order by Indexs asc";
+        $sql = "select Id, Url from media where ProductId = :id and Is_Deleted = :is order by Indexs asc";
         $param = [":id" => $id, ":is" => 0];
         return $db->query_select($sql,$param);
     }
 
     //add image
-    public function addImages($image)
+    public function addImage($image)
     {
         if(is_array($image) && count($image) == 3){
             $db = new  DBConnection('pmmanguonmo');
@@ -46,12 +46,12 @@ class Media
     }
 
     //delete image
-    public function deleteImage($productId, $index)
+    public function deleteImage($Id)
     {
-        if(is_numeric($productId) && $productId > 0){
+        if(is_numeric($Id) && $Id > 0){
             $db = new  DBConnection('pmmanguonmo');
-            $sql = "update media set Is_Deleted = 1 where ProductId = :productId and Indexs = :index";
-            $params = [":productId" => $productId, ":index"=>$index];
+            $sql = "update media set Is_Deleted = 1 where Id = :id";
+            $params = [":id" => $Id];
             return $db->query_update($sql, $params);
         }
     }

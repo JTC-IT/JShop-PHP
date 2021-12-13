@@ -1,20 +1,25 @@
 <?php
+require_once '../Libs/Cart.php';
 
 //start session
 session_start();
 
 if(isset($_POST["submit"])){
-    $cart = [];
-
     if(isset($_SESSION['cart']))
         $cart = $_SESSION['cart'];
+    else $cart = [];
 
-    $len_cart = count($cart);
-
-    $cart[$len_cart] = $_POST;
-
+    $item = [
+        'id' => $_POST['id'],
+        'img' => $_POST['img'],
+        'name' => $_POST['name'],
+        'brand' => $_POST['brand'],
+        'price' => $_POST['price'],
+        'quantity' => $_POST['quantity']
+    ];
+    $cart = addItem($cart,$item);
     $_SESSION['cart'] = $cart;
 }
 
-header("Location: ../../Public/Cart.php");
+header("Location: ../../Public/CartView.php");
 exit;
