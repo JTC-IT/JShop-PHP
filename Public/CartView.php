@@ -44,8 +44,21 @@ $check = getTotalQuantity($cart) > 0;
     <!--Right elements-->
     <ul class="navbar-nav d-flex flex-row-reverse">
         <!-- Right elements -->
-        <li class="nav-item mr-4 font-weight-bold"><a href="#" class="nav-link">ĐĂNG NHẬP</a></li>
-        <li class="nav-item mr-4 font-weight-bold"><a href="#" class="nav-link">ĐĂNG KÝ</a></li>
+        <?php if(!isset($_SESSION['user'])){ ?>
+            <li class="nav-item mr-4 font-weight-bold"><a href="../Apps/Controller/register_control.php" class="nav-link">Đăng ký</a></li>
+            <li class="nav-item mr-4 font-weight-bold"><a href="../Apps/Controller/login_control.php" class="nav-link">Đăng nhập</a></li>
+        <?php }else{?>
+            <li class="nav-item mr-4 font-weight-bold">
+                <a href="../Apps/Controller/logout_control.php" class="nav-link">
+                    <ion-icon name="log-out-outline"></ion-icon>
+                    Đăng xuất</a>
+            </li>
+            <li class="nav-item mr-4 font-weight-bold">
+                <a href="Account.php" class="nav-link">
+                    <ion-icon name="person"></ion-icon>
+                    <?=$_SESSION['user']['Name']?></a>
+            </li>
+        <?php }?>
     </ul>
 </div>
 <nav class="navbar navbar-expand-lg sticky-top bg-secondary">

@@ -1,41 +1,28 @@
 <?php
-    require_once '../Apps/Libs/Category.php';
-    require_once '../Apps/Libs/Product.php';
-    require_once '../Apps/Libs/Media.php';
-    require_once '../Apps/Libs/Cart.php';
+require_once '../Apps/Libs/Category.php';
+require_once '../Apps/Libs/Cart.php';
 
-    //start session
-    session_start();
+//start session
+session_start();
 
-    //get category
-    $category = new Category();
-    $listCategory = $category->getCategory();
+//get category
+$category = new Category();
+$listCategory = $category->getCategory();
 
-    //get products
-    $id = 1;
-    if(isset($_GET['id']))
-        $id = $_GET['id'];
-    $product = new Product();
-    $p = $product->getProduct($id);
-
-    //create class media
-    $media = new Media();
-    $imgs = $media->getImages($id);
-
-    function getlistChildcategory($parent)
-    {
-        global $category;
-        $listChild = $category->getCategoryChild($parent['Id']);
-        if($listChild && count($listChild) > 0) {
-            echo "<li class='dropdown-submenu'>".
-                "<a  class='category-item dropdown-item' tabindex='-1'>".$parent['Name']."</a>".
-                "<ul class='submenu dropdown-menu'>";
-            foreach ($listChild as $child)
-                getlistChildcategory($child);
-            echo "</ul></li>";
-        }else
+function getlistChildcategory($parent)
+{
+    global $category;
+    $listChild = $category->getCategoryChild($parent['Id']);
+    if($listChild && count($listChild) > 0) {
+        echo "<li class='dropdown-submenu'>".
+            "<a  class='category-item dropdown-item' tabindex='-1'>".$parent['Name']."</a>".
+            "<ul class='submenu dropdown-menu'>";
+        foreach ($listChild as $child)
+            getlistChildcategory($child);
+        echo "</ul></li>";
+    }else
         echo "<li><a class='category-item dropdown-item' href='Home.php?categoryId=".$parent['Id']."'>".$parent['Name']."</a></li>";
-    }
+}
 ?>
 <!doctype html>
 <html lang="en">
@@ -57,7 +44,6 @@
 
     <!-- CSS -->
     <link rel="stylesheet" href="../Media/CSS/home_style.css">
-    <link rel="stylesheet" href="../Media/CSS/product_details_style.css">
 </head>
 <body>
 <!-- Header -->
@@ -67,21 +53,8 @@
     <!--Right elements-->
     <ul class="navbar-nav d-flex flex-row-reverse">
         <!-- Right elements -->
-        <?php if(!isset($_SESSION['user'])){ ?>
-            <li class="nav-item mr-4 font-weight-bold"><a href="../Apps/Controller/register_control.php" class="nav-link">Đăng ký</a></li>
-            <li class="nav-item mr-4 font-weight-bold"><a href="../Apps/Controller/login_control.php" class="nav-link">Đăng nhập</a></li>
-        <?php }else{?>
-            <li class="nav-item mr-4 font-weight-bold">
-                <a href="../Apps/Controller/logout_control.php" class="nav-link">
-                    <ion-icon name="log-out-outline"></ion-icon>
-                    Đăng xuất</a>
-            </li>
-            <li class="nav-item mr-4 font-weight-bold">
-                <a href="Account.php" class="nav-link">
-                    <ion-icon name="person"></ion-icon>
-                    <?=$_SESSION['user']['Name']?></a>
-            </li>
-        <?php }?>
+        <li class="nav-item mr-4 font-weight-bold"><a href="../Apps/Controller/register_control.php" class="nav-link">Đăng ký</a></li>
+        <li class="nav-item mr-4 font-weight-bold"><a href="../Apps/Controller/login_control.php" class="nav-link">Đăng nhập</a></li>
     </ul>
 </div>
 <nav class="navbar navbar-expand-lg sticky-top bg-secondary">
@@ -91,7 +64,7 @@
         <div class="w-100 d-flex justify-content-between">
             <!-- Navbar brand -->
             <a class="navbar-brand mt-2 mt-lg-0" href="./Home.php"> <img
-                        src="../Media/Images/logo_shop.png" height="55" alt="JShop" />
+                    src="../Media/Images/logo_shop.png" height="55" alt="JShop" />
             </a>
             <!-- Right elements -->
             <div class="d-flex justify-content-between align-items-center w-50">
@@ -120,44 +93,45 @@
             </ul>
             <div></div>
         </div>
-        <div class="col-sm-9">
-            <h3 class="font-weight-bold mt-4 pl-2 text-secondary">CHI TIẾT SẢN PHẨM</h3>
-            <div class="card">
-                <div class="container-fluid">
-                    <div class="wrapper row">
-                        <div class="preview col-md-6">
-                            <div class="preview-pic tab-content">
-                                <div class="tab-pane active"><img id="pic-show" src="../Media/Images/<?=$imgs[0]['Url']?>"/></div>
+        <div class="col-sm-9" style="background: linear-gradient(90deg, hsla(152, 100%, 50%, 1) 0%, hsla(186, 100%, 69%, 1) 100%)">
+            <div class="container">
+                <div class="p-4 d-flex justify-content-center">
+                    <div class="card w-50 p-4">
+                        <h3 class="font-weight-bold m-4 text-primary text-center">ĐĂNG NHẬP</h3>
+                        <form action="../Apps/Controller/login_control.php" method="post">
+                            <div class="form-row pl-4 pr-4">
+                                <div class="col-md-12 mb-3">
+                                    <label for="phone">Số điện thoại:<sup class="text-danger">*</sup></label>
+                                    <input type="tel" name="phone"
+                                           class="form-control<?= isset($_SESSION['mess_phone'])? ' is-invalid':' is-valid'?>"
+                                           id="phone" placeholder="Số điện thoại"
+                                           value="<?= isset($_SESSION['phone'])? $_SESSION['phone']:''?>">
+                                    <div class="invalid-feedback">
+                                        <?= isset($_SESSION['mess_phone'])? $_SESSION['mess_phone']:''?>
+                                    </div>
+                                </div>
                             </div>
-                            <ul class="preview-thumbnail nav nav-tabs">
-                                <?php
-                                foreach ($imgs as $img) {
-                                    echo "<li><a><img onclick='showImage(this)' src=\"../Media/Images/".$img['Url']."\"/></a></li>";
-                                }
-                                ?>
-                            </ul>
-                        </div>
-                        <form class="col-md-6" action="../Apps/Controller/order_control.php" method="post">
-                            <input type="hidden" name="id" value="<?=$p['Id']?>">
-                            <input name="img" type="hidden" value="<?=$imgs[0]['Url']?>">
-                            <input type="hidden" name="name" value="<?=$p['Name']?>">
-                            <input type="hidden" name="brand" value="<?=$p['Brand']?>">
-                            <input type="hidden" name="price" value="<?=$p['Price']?>">
-                            <h3 class="product-title"><?=$p['Name']?></h3>
-                            <small class="text-primary font-weight-bold">Thương hiệu: <?=$p['Brand']?></small>
-                            <p class="product-description text-justify"><?=$p['Description']?></p>
-                            <h4 class="price">Giá: <span><?=number_format($p['Price']).' đ'?></span></h4>
-                            <div class="form-group row d-flex align-items-center">
-                                <label for="quantity" class="quantity col-sm-5">Số lượng:</label>
-                                <select name="quantity" class="form-control col-sm-3" id="quantity">
-                                    <option value='1' selected>1</option>
-                                    <?php for($i = 2; $i < 10; $i++)
-                                        echo "<option value='$i'>$i</option>";
-                                    ?>
-                                </select>
+                            <div class="form-row pl-4 pr-4">
+                                <div class="col-md-12 mb-3">
+                                    <label for="pass">Mật khẩu:<sup class="text-danger">*</sup></label>
+                                    <input type="password" name="pass"
+                                           class="form-control<?= isset($_SESSION['mess_pass'])? ' is-invalid':' is-valid'?>"
+                                           id="pass" placeholder="Mật khẩu"
+                                           value="<?= isset($_SESSION['pass'])? $_SESSION['pass']:''?>">
+                                    <div class="invalid-feedback">
+                                        <?= isset($_SESSION['mess_pass'])? $_SESSION['mess_pass']:''?>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="d-flex justify-content-end">
-                                <button class="add-to-cart btn btn-default" type="submit" name="submit">Thêm giỏ hàng</button>
+                            <div class="form-row m-4">
+                                <div class="col-md-12 mb-3 text-center">
+                                    <button name="login" class="btn btn-success" type="submit">Đăng nhập</button>
+                                </div>
+                            </div>
+                            <div class="form-row m-4">
+                                <div class="col-md-12 mb-3 text-center">
+                                    <small>Bạn chưa có tài khoản? <a href="../Apps/Controller/register_control.php">Đăng ký</a> </small>
+                                </div>
                             </div>
                         </form>
                     </div>
@@ -186,7 +160,7 @@
             <!-- Github -->
             <a target="_blank" class="rounded-circle m-2 text-white"
                href="https://github.com/JTC-IT" role="button"> <ion-icon
-                        name="logo-github"></ion-icon>
+                    name="logo-github"></ion-icon>
             </a>
         </section>
     </div>
@@ -196,3 +170,6 @@
 <script src="../Media/JS/product_details_script.js"></script>
 </body>
 </html>
+<?php
+if(isset($_GET['mes']) && $_GET['mes'] == 1)
+    echo "<script>alert('Đăng ký thành công!')</script>";
