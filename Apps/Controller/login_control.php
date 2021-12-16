@@ -51,7 +51,9 @@ if($check){
         unset($_SESSION['mess_phone']);
         unset($_SESSION['mess_pass']);
         $_SESSION['user'] = $result[0];
-        header("Location: ../../Public/Home.php");
+        if($result[0]['Type'] > 0)
+            header("Location: ../../Admin/Product_manage.php");
+        else header("Location: ../../Public/Home.php");
         exit();
     }else {
         $_SESSION['mess_pass'] = 'Mật khẩu không đúng!';

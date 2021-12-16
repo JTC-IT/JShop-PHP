@@ -1,9 +1,12 @@
 <?php
 include '../Apps/Libs/Category.php';
 
+//start session
+session_start();
+
 //get category
 $category = new Category();
-$listCategory = $category->getAllCategory();
+$listCategory = $category->getCategoryLast();
 
 ?>
 <!doctype html>
@@ -26,6 +29,7 @@ $listCategory = $category->getAllCategory();
     <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
 
     <!--Style-->
+    <link rel="stylesheet" href="../Media/CSS/product_manage_style.css">
     <link rel="stylesheet" href="../Media/CSS/add_product_style.css">
 </head>
 <body>
@@ -34,24 +38,36 @@ $listCategory = $category->getAllCategory();
     <!--Right elements-->
     <ul class="navbar-nav">
         <!-- Right elements -->
-        <li class="nav-item"><a href="#">LOGOUT</a></li>
-        <li class="nav-item"><a href="#">ADMIN</a></li>
+        <li class="nav-item"><a href="../Apps/Controller/logout_control.php">Đăng xuất</a></li>
+        <li class="nav-item"><?=$_SESSION['user']['Name']?></li>
     </ul>
 </div>
-<nav class="navbar">
-    <!-- Container wrapper -->
-    <div class="container">
-        <div class="w-100 d-flex justify-content-between">
-            <!-- Navbar brand -->
-            <a class="navbar-brand mt-2 mt-lg-0" href="../Public/Home.php">
+<div class="nav-menu">
+    <div class="row">
+        <!-- Navbar brand -->
+        <div class="col-sm-4 d-flex justify-content-center align-items-center">
+            <a href="Product_manage.php">
                 <img src="../Media/Images/logo_shop.png" height="55" alt="JShop" />
             </a>
-            <!-- Right elements -->
-            <div class="d-flex justify-content-between align-items-center w-50">
+        </div>
+        <!-- Right elements -->
+        <div class="col-sm-8 h-100">
+            <div class="d-flex align-items-center">
+                <a class="menu_item active d-flex flex-column align-items-center" href="Product_manage.php">
+                    <span><ion-icon name="dice"></ion-icon></span>QUẢN LÝ SẢN PHẨM
+                </a>
+                <a class="menu_item d-flex flex-column align-items-center" href="Category_manage.php">
+                    <span><ion-icon name="trail-sign-outline"></ion-icon></span>QUẢN LÝ DANH MỤC
+                </a>
+                <?php if($_SESSION['user']['Type'] == 2){ ?>
+                    <a class="menu_item d-flex flex-column align-items-center" href="User_manage.php">
+                        <span><ion-icon name="people-outline"></ion-icon></span>QUẢN LÝ NGƯỜI DÙNG
+                    </a>
+                <?php }?>
             </div>
         </div>
     </div>
-</nav>
+</div>
 
 <!--Body-->
 <div class="container min-vh-100">

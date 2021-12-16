@@ -2,13 +2,21 @@
     require_once '../Apps/Libs/Category.php';
     require_once '../Apps/Libs/Product.php';
 
+    //start session
+    session_start();
+
+    if(!isset($_SESSION['user']) || $_SESSION['user']['Type'] < 1){
+        header("Location: ../Public/Home.php");
+        exit();
+    }
+
     //get current_page
     $current_page = isset($_GET['page']) ? $_GET['page'] : 1;
     $limit = isset($_GET['limit']) ? $_GET['limit'] : 7;
 
     //get category
     $category = new Category();
-    $listCategory = $category->getAllCategory();
+    $listCategory = $category->getCategoryLast();
 
     //get products
     $product = new Product();
@@ -54,8 +62,8 @@
     <!--Right elements-->
     <ul class="navbar-nav">
         <!-- Right elements -->
-        <li class="nav-item"><a href="#">Đăng xuất</a></li>
-        <li class="nav-item"><a href="#">ADMIN</a></li>
+        <li class="nav-item"><a href="../Apps/Controller/logout_control.php">Đăng xuất</a></li>
+        <li class="nav-item"><?=$_SESSION['user']['Name']?></li>
     </ul>
 </div>
 <div class="nav-menu">
@@ -75,9 +83,11 @@
                 <a class="menu_item d-flex flex-column align-items-center" href="Category_manage.php">
                     <span><ion-icon name="trail-sign-outline"></ion-icon></span>QUẢN LÝ DANH MỤC
                 </a>
-                <a class="menu_item d-flex flex-column align-items-center" href="User_manage.php">
-                    <span><ion-icon name="people-outline"></ion-icon></span>QUẢN LÝ NGƯỜI DÙNG
-                </a>
+                <?php if($_SESSION['user']['Type'] == 2){ ?>
+                    <a class="menu_item d-flex flex-column align-items-center" href="User_manage.php">
+                        <span><ion-icon name="people-outline"></ion-icon></span>QUẢN LÝ NGƯỜI DÙNG
+                    </a>
+                <?php }?>
             </div>
         </div>
     </div>
@@ -88,11 +98,11 @@
         <div class="table-wrapper">
             <div class="table-title">
                 <div class="row">
-                    <div class="col-sm-7"><h2>Quản lý <b>sản phẩm</b></h2></div>
+                    <div class="col-sm-7"><h2>QUẢN LÝ <b>SẢN PHẨM</b></h2></div>
                     <div class="col-sm-5 d-flex justify-content-between align-items-center">
                         <a href="Add_Product.php" class="badge badge-pill badge-success p-3">
                             <i class="fa fa-plus" aria-hidden="true"></i>
-                             Thêm sản phẩm
+                             Thêm Sản Phẩm
                         </a>
                         <select class="form-control form-control-sm w-50 ml-3 mr-3"
                                 onchange="location = 'Product_manage.php?categoryId='+ this.value">

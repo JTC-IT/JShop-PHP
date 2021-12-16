@@ -37,7 +37,7 @@ class Product
             return $db->query_select($sql)[0]['total'];
         if(isset($param['categoryId']) && $param['categoryId'] > 0)
             $sql = $sql." and CategoryId = ".$param['categoryId'];
-        if(isset($param['key']) && $param['key'] != '')
+        else if(isset($param['key']) && $param['key'] != '')
             $sql = $sql." and Name LIKE '%".$param['key']."%'";
         return $db->query_select($sql)[0]['total'];
     }
