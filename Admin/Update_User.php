@@ -76,7 +76,7 @@ $user = $users->getUser($id);
 <!--Body-->
 <div class="container min-vh-100">
     <fieldset class="container w-100 h-100 d-flex justify-content-center">
-        <form action="../Apps/Controller/add_user_control.php" method="post" class="w-50 rounded mt-4 p-4"
+        <form action="../Apps/Controller/update_user_control.php" method="post" class="w-50 rounded mt-4 p-4"
               style="background-color: #C1C1C1; min-height: 65vh;">
             <!-- Form Name -->
             <h4 class="font-weight-bold text-center border-bottom border-dark">CẬP NHẬT TÀI KHOẢN</h4>

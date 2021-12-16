@@ -32,7 +32,7 @@ if(!isset($_POST['phone']) || trim($_POST['phone']) === ''){
         $check = false;
         $_SESSION['mess_phone'] = 'Số điện thoại phải có 10 chữ số!';
     }
-    else if($users->checkPhone($phone)){
+    else if($users->checkPhone($phone,$_POST['id'])){
         $check = false;
         $_SESSION['mess_phone'] = 'Số điện thoại đã được đăng ký!';
     }
@@ -64,13 +64,11 @@ if($check){
         , ':pass'=>md5($pass)
         , ':type'=>(int)$_POST['type']];
 
-    if($users->updateUser($param)){
+    if($users->updateUser($param))
         header("Location: ../../Admin/User_manage.php?mess=2");
-        exit();
-    }else {
+    else
         header("Location: ../../Admin/User_manage.php?mess=-2");
-        exit();
-    }
+    exit();
 }
 
 header("Location: ../../Admin/Update_User.php?id=".$_POST['id']);
