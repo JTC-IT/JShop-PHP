@@ -9,10 +9,17 @@ if(!isset($_POST['name']) || $_POST['name'] === ''){
 }
 
 $check = true;
+$name = '';
 $phone = '';
 $pass = '';
 $repass = '';
 $users = new User();
+
+//check name
+if(!isset($_POST['name']) || trim($_POST['name']) === ''){
+    $check = false;
+    $_SESSION['mess_name'] = 'Vui lòng nhập họ tên!';
+}else $name = trim($_POST['name']);
 
 //check phone
 if(!isset($_POST['phone']) || trim($_POST['phone']) === ''){
@@ -62,7 +69,7 @@ if($check){
     unset($_SESSION['mess_pass']);
     unset($_SESSION['mess_repass']);
 
-    $param = [':name'=>trim($_POST['name'])
+    $param = [':name'=>$name
         , ':phone'=>$phone
         , ':address'=>isset($_POST['address'])?trim($_POST['address']):NULL
         , ':pass'=>md5($pass)

@@ -103,9 +103,12 @@ function getlistChildcategory($parent)
                                 <div class="col-md-6 mb-3">
                                     <label for="name">Họ tên:<sup class="text-danger">*</sup></label>
                                     <input type="text" name="name"
-                                           class="form-control"
+                                           class="form-control<?= isset($_SESSION['mess_name'])? ' is-invalid':''?>"
                                            id="name" placeholder="Họ tên"
                                            required>
+                                    <div class="invalid-feedback">
+                                        <?= isset($_SESSION['mess_name'])? $_SESSION['mess_name']:''?>
+                                    </div>
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label for="phone">Số điện thoại:<sup class="text-danger">*</sup></label>
