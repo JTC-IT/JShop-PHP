@@ -89,8 +89,10 @@ $product = new Product();
                         <div class="col-sm-7"><h2>QUẢN LÝ <b>DANH MỤC</b></h2></div>
                         <div class="col-sm-5 d-flex justify-content-between align-items-center">
                             <button type="button" class="btn btn-success badge-pill p-2"
-                                    data-toggle="modal" data-target="#addModal">
-                                <i class="fa fa-plus" aria-hidden="true"></i>
+                                    data-toggle="modal"
+                                    data-target="#addModal"
+                                    style="font-size: 14px">
+                                <i class="fa fa-plus-circle mr-2" aria-hidden="true"></i>
                                 Thêm Danh Mục
                             </button>
                             <form action="Category_manage.php" method="get" class="search-box">
@@ -114,7 +116,7 @@ $product = new Product();
                     <tbody id="list-products">
                     <?php
                     $i = 1;
-                    if (isset($listCategory)) foreach ($listCategory as $p){?>
+                    if (count($listCategory)>0) foreach ($listCategory as $p){?>
                         <tr class="product-item">
                             <td><?=$i++?></td>
                             <td><?=$p['Name']?></td>
@@ -122,7 +124,7 @@ $product = new Product();
                             <td><?=$product->total_records(['categoryId'=>$p['Id']]) ?></td>
                             <td><?=$p['Date_Updated']?></td>
                             <td>
-                                <button type="button" class="edit"
+                                <button type="button" class="edit text-warning border-0"
                                         data-toggle="modal" data-target="#editModal"
                                         data-id="<?=$p['Id']?>"
                                         data-name="<?=$p['Name']?>"
@@ -132,8 +134,9 @@ $product = new Product();
                                 <a href="#myModal" data-id="<?=$p['Id']?>" class="delete" data-toggle="modal" title="Delete"><i class="material-icons">&#xE872;</i></a>
                             </td>
                         </tr>
-                    <?php  }
-                    ?>
+                    <?php } else {
+                        echo "<tr><td colspan='6' class='alert alert-info text-center' role='alert'>Không tìm thấy kết quả nào!</td></tr>";
+                    }?>
                     </tbody>
                 </table>
             </div>

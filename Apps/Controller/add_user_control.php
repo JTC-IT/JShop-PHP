@@ -2,17 +2,25 @@
 session_start();
 require_once "../Libs/User.php";
 
-if(!isset($_POST['name']) || $_POST['name'] === ''){
-    session_destroy();
-    header("Location: ../../Public/Register.php");
+if(!isset($_POST['submit'])){
+    unset($_SESSION['mess_phone']);
+    unset($_SESSION['mess_pass']);
+    unset($_SESSION['mess_name']);
+    header("Location: ../../Admin/Add_User.php");
     exit();
 }
 
 $check = true;
+$name = '';
 $phone = '';
 $pass = '';
-$repass = '';
 $users = new User();
+
+//check name
+if(!isset($_POST['name']) || trim($_POST['name']) === ''){
+    $check = false;
+    $_SESSION['mess_name'] = 'Vui lòng nhập họ tên!';
+} else $name = trim($_POST['name']);
 
 //check phone
 if(!isset($_POST['phone']) || trim($_POST['phone']) === ''){
@@ -43,38 +51,25 @@ else {
     }
 }
 
-//check re-password
-if(!isset($_POST['re-pass']) || trim($_POST['re-pass']) === ''){
-    $check = false;
-    $_SESSION['mess_repass'] = 'Vui lòng nhập lại mật khẩu!';
-}
-else {
-    $repass = trim($_POST['re-pass']);
-    if(strcmp($pass,$repass) !== 0){
-        $check = false;
-        $_SESSION['mess_repass'] = 'Mật khẩu nhập lại không đúng!';
-    }
-}
-
 //check success:
 if($check){
     unset($_SESSION['mess_phone']);
     unset($_SESSION['mess_pass']);
-    unset($_SESSION['mess_repass']);
+    unset($_SESSION['mess_name']);
 
-    $param = [':name'=>trim($_POST['name'])
+    $param = [':name'=>$name
         , ':phone'=>$phone
         , ':address'=>isset($_POST['address'])?trim($_POST['address']):NULL
         , ':pass'=>md5($pass)
-        , ':type'=>0];
+        , ':type'=>(int)$_POST['type']];
 
     if($users->addUser($param)){
-        header("Location: ../../Public/Login.php?mes=1");
+        header("Location: ../../Admin/User_manage.php?mess=1");
         exit();
     }else {
-        header("Location: ../../Public/Register.php?mes=0");
+        header("Location: ../../Admin/User_manage.php?mess=-1");
         exit();
     }
 }
 
-header("Location: ../../Public/Register.php");
+header("Location: ../../Admin/Add_User.php");

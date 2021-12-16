@@ -100,8 +100,9 @@
                 <div class="row">
                     <div class="col-sm-7"><h2>QUẢN LÝ <b>SẢN PHẨM</b></h2></div>
                     <div class="col-sm-5 d-flex justify-content-between align-items-center">
-                        <a href="Add_Product.php" class="badge badge-pill badge-success p-3">
-                            <i class="fa fa-plus" aria-hidden="true"></i>
+                        <a href="Add_Product.php" class="badge badge-pill badge-success p-2"
+                           style="font-size: 13px">
+                            <i class="fa fa-plus-circle mr-2" aria-hidden="true"></i>
                              Thêm Sản Phẩm
                         </a>
                         <select class="form-control form-control-sm w-50 ml-3 mr-3"
@@ -135,7 +136,7 @@
                 <tbody id="list-products">
                 <?php
                 $i = 1;
-                if (isset($listProducts)) foreach ($listProducts as $p){?>
+                if (count($listProducts) > 0) foreach ($listProducts as $p){?>
                     <tr class="product-item">
                         <td><?=$i++?></td>
                         <td><?=$p['Name']?></td>
@@ -148,8 +149,9 @@
                             <a href="#myModal" data-id="<?=$p['Id']?>" class="delete" data-toggle="modal" title="Delete"><i class="material-icons">&#xE872;</i></a>
                         </td>
                     </tr>
-                <?php  }
-                ?>
+                <?php } else {
+                    echo "<tr><td colspan='7' class='alert alert-info text-center' role='alert'>Không tìm thấy kết quả nào!</td></tr>";
+                }?>
                 </tbody>
             </table>
             <div class="clearfix">

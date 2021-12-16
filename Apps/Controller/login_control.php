@@ -46,7 +46,7 @@ else {
 if($check){
     $param = [':phone'=>$phone, ':pas'=>md5($pass)];
 
-    $result = $users->getUser($param);
+    $result = $users->login($param);
     if(count($result) > 0){
         unset($_SESSION['mess_phone']);
         unset($_SESSION['mess_pass']);
